@@ -8,4 +8,4 @@ class Unit:
         self.movement = movement
         self.range = range
         self.grid = grid
-        self.color = "red"
+        self.color = "#cc241d"

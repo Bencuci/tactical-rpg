@@ -15,13 +15,12 @@ def main():
             if event.type == pygame.QUIT:
                 running = False
 
-        # Hover and Select Effects
-        mx, my = pygame.mouse.get_pos()
-        row = my // TILE_SIZE
-        col = mx // TILE_SIZE
-        grid.hover_tile(row, col)
-        if pygame.mouse.get_pressed()[0]:
-            grid.select_tile(row, col)
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if event.button == 1:
+                    mx, my = pygame.mouse.get_pos()
+                    row = my // TILE_SIZE
+                    col = mx // TILE_SIZE
+                    grid.select_tile(row, col)
 
         pygame.display.flip()
 

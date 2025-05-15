@@ -10,9 +10,9 @@ class Grid:
         self.screen = screen
         self.tiles = []
         self.selected_tile = None
-        self.hovered_tile = None
         self.units = []
         self.selected_unit = None
+        self.in_reach = []
 
         self._initialize_tiles()
         self.draw()
@@ -28,9 +28,23 @@ class Grid:
     def draw(self):
         for row in self.tiles:
             for tile in row:
+                tile.color = "#ebdbb2"
+                tile.border_color = "#282828"
+                tile.border_width = 1
                 posx = tile.col * self.tile_size
                 posy = tile.row * self.tile_size
                 rect = pygame.Rect(posx, posy, self.tile_size, self.tile_size)
+
+                if self.selected_tile:
+                    if self.selected_tile.unit and self.__is_within_reach(tile):
+                        self.in_reach.append(tile)
+                        tile.color = "#83a598"
+                        tile.border_color = "#458588"
+                    
+                    if self.selected_tile.unit:
+                        self.selected_tile.color = "#8ec07c"
+                        self.selected_tile.border_color = "#8ec07c"
+                        self.selected_tile.border_width = 3
                 
                 pygame.draw.rect(self.screen, tile.color, rect)
                 pygame.draw.rect(self.screen, tile.border_color, rect, tile.border_width)
@@ -40,7 +54,7 @@ class Grid:
             y_center = (unit.row * self.tile_size) + (self.tile_size / 2)
 
             pygame.draw.circle(self.screen, unit.color, (x_center, y_center), 25)
-
+        
 
     def add_unit(self, unit, row, col):
         match unit.lower():
@@ -54,32 +68,22 @@ class Grid:
         self.draw()
     
     def select_tile(self, row, col):
-        if self.selected_tile:
-            self.selected_tile.border_width = 1
-            self.selected_tile.border_color = "black"
-            self.selected_tile.color = "white"
+        self.in_reach = []
 
-        self.selected_tile = self.tiles[row][col]
-        
-        if self.selected_tile.unit:
-            self.selected_unit = self.selected_tile.unit
-            self.selected_tile.border_width = 3
-            self.selected_tile.border_color = "blue"
-            self.selected_tile.color = "gray"
+        if self.selected_tile and self.selected_tile == self.tiles[row][col]:
+            self.selected_tile = None
+        else:
+            self.selected_tile = self.tiles[row][col]
+            if self.selected_tile.unit:
+                self.selected_unit = self.selected_tile.unit
 
         self.draw()
     
-    def hover_tile(self, row, col):
-        if (self.hovered_tile and self.hovered_tile != self.selected_tile) or (self.selected_tile and not self.selected_tile.unit):
-            self.hovered_tile.border_width = 1
-            self.hovered_tile.border_color = "black"
-            self.hovered_tile.color = "white"
+    def __is_within_reach(self, tile):
+        x_dist = abs(tile.col - self.selected_tile.col)
+        y_dist = abs(tile.row - self.selected_tile.row)
 
-        self.hovered_tile = self.tiles[row][col]
+        if (x_dist + y_dist) <= self.selected_unit.movement:
+            return True
         
-        if self.hovered_tile.unit:
-            self.hovered_tile.border_width = 2
-
-        self.hovered_tile.color = "gray"
-
-        self.draw()
+        return False
