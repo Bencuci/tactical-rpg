@@ -36,25 +36,33 @@ class Grid:
                 rect = pygame.Rect(posx, posy, self.tile_size, self.tile_size)
 
                 if self.selected_tile:
-                    if self.selected_tile.unit and self.__is_within_reach(tile):
+                    if self.selected_unit and self.selected_tile.unit and self.__is_within_reach(tile):
                         self.in_reach.append(tile)
                         tile.color = "#83a598"
                         tile.border_color = "#458588"
-                    
-                    if self.selected_tile.unit:
-                        self.selected_tile.color = "#8ec07c"
-                        self.selected_tile.border_color = "#8ec07c"
-                        self.selected_tile.border_width = 3
+
+                    if tile == self.selected_tile:
+                        if tile.unit:
+                            tile.color = "#8ec07c"
+                            tile.border_color = "#8ec07c"
+                            tile.border_width = 3
+                        
+                        elif self.selected_unit and self.__is_within_reach(tile):
+                            self.__move_unit(self.selected_unit, tile.row, tile.col)
+                            self.in_reach = []
+                        
+                        elif self.selected_unit:
+                            self.selected_unit = None
                 
                 pygame.draw.rect(self.screen, tile.color, rect)
                 pygame.draw.rect(self.screen, tile.border_color, rect, tile.border_width)
-        
+
         for unit in self.units:
             x_center = (unit.col * self.tile_size) + (self.tile_size / 2)
             y_center = (unit.row * self.tile_size) + (self.tile_size / 2)
 
             pygame.draw.circle(self.screen, unit.color, (x_center, y_center), 25)
-        
+
 
     def add_unit(self, unit, row, col):
         match unit.lower():
@@ -70,8 +78,9 @@ class Grid:
     def select_tile(self, row, col):
         self.in_reach = []
 
-        if self.selected_tile and self.selected_tile == self.tiles[row][col]:
+        if self.selected_tile and self.selected_tile == self.tiles[row][col] and self.selected_unit:
             self.selected_tile = None
+            self.selected_unit = None
         else:
             self.selected_tile = self.tiles[row][col]
             if self.selected_tile.unit:
@@ -80,10 +89,19 @@ class Grid:
         self.draw()
     
     def __is_within_reach(self, tile):
-        x_dist = abs(tile.col - self.selected_tile.col)
-        y_dist = abs(tile.row - self.selected_tile.row)
+        x_dist = abs(tile.col - self.selected_unit.col)
+        y_dist = abs(tile.row - self.selected_unit.row)
 
         if (x_dist + y_dist) <= self.selected_unit.movement:
             return True
         
         return False
+
+    def __move_unit(self, unit, row, col):
+        self.tiles[unit.row][unit.col].occupied = False
+        self.tiles[unit.row][unit.col].unit = None
+        self.tiles[row][col].occupied = True
+        self.tiles[row][col].unit = unit
+        unit.row = row
+        unit.col = col
+        self.selected_unit = False
