@@ -8,15 +8,20 @@ def main():
     running = True
 
     grid = Grid(TILE_SIZE, ROW_NUM, COL_NUM, screen)
+    grid.add_unit("knight", 3, 3)
 
     while running:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
 
+        # Hover and Select Effects
+        mx, my = pygame.mouse.get_pos()
+        row = my // TILE_SIZE
+        col = mx // TILE_SIZE
+        grid.hover_tile(row, col)
         if pygame.mouse.get_pressed()[0]:
-            mx, my = pygame.mouse.get_pos()
-            print(mx // TILE_SIZE, my // TILE_SIZE)
+            grid.select_tile(row, col)
 
         pygame.display.flip()
 
