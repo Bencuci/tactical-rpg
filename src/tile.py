@@ -1,5 +1,5 @@
 class Tile:
-    def __init__(self, row, col, height=0, color="white", border_color="black", border_width=1):
+    def __init__(self, row, col, height=0, color="#ebdbb2", border_color="#282828", border_width=1):
         self.row = row
         self.col = col
         self.occupied = False

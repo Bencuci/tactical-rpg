@@ -10,6 +10,7 @@ def main():
     grid = Grid(TILE_SIZE, ROW_NUM, COL_NUM, screen)
     grid.add_unit("knight", 3, 3)
     grid.add_unit("knight", 3, 4)
+    grid.add_unit("archer", 1, 1)
 
     while running:
         for event in pygame.event.get():

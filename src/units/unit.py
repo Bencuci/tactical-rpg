@@ -9,3 +9,4 @@ class Unit:
         self.range = range
         self.grid = grid
         self.color = "#cc241d"
+        self.name = "unit"
