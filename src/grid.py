@@ -108,8 +108,12 @@ class Grid:
         x_dist = abs(target.col - self.selected_unit.col)
         y_dist = abs(target.row - self.selected_unit.row)
 
-        if 0 < (x_dist + y_dist) <= self.selected_unit.range:
-            return True
+        if self.selected_unit.name == "Knight":
+            if 0 < (x_dist + y_dist) <= self.selected_unit.range:
+                return True
+        elif self.selected_unit.name == "Archer":
+            if 1 < (x_dist + y_dist) <= self.selected_unit.range:
+                return True
 
         return False
 
